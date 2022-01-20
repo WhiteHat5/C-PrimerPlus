@@ -7,3 +7,93 @@
 변수 앞에 언더스코어를 붙이면 실행환경에 따라 알 수 없는 결과가 나올 수도 있으니 주의
 *) 변수 이름 앞에 int 등의 키워드를 붙여서 변수가 뭘 나타내는지 가리키는 방식도 있다. 취향의 문제인듯
 
+정수타입의 크기는 실행환경에 따라 다르지만 일부 지정된 규칙은 존재한다 (short가 최소 16비트의 크기를 보장받는 것 등)
+*) 바이트는 주로 8비트를 의미하지만 C++에서는 "실행환경의 문자셋을 수용할 수 있는 크기의 인접비트모음" 이기 때문에 실행환경에 따라 8비트 이상이 될 수도 있다.
+**) 8bit를 나타내고 싶다면 octet이라는 단어를 활용하자
+
+sizeof 연산자를 타입 키워드에 직접 쓸 때는 괄호가 필수다.
+변수에 sizeof 연산자를 쓸 때는 괄호를 쓸 필요가 없다
+
+C++에서는 C와 다른 initializaton syntax를 제공한다
+int wren(356); //set wren to 356
+
+!) initialization을 {}을 이용해서 할 수도 있다
+int emus{7};
+int rheas = {12};
+왜 이런 방식을 써야 하냐면 클래스나 배열의 경우 initialization syntax가 다른데 이걸 하나로 통합하기 위해서라고 함
+
+*)unsigned 타입은 타입이 저장할 수 있는 최대치를 넘어가면 0으로 돌아가며 C++는 이를 보장하고 있다
+**) signed 타입의 경우 이게 보장되지는 않으나 일반적으로 이런 방식으로 돌아간다고 함
+
+cout << hex; // 숫자 출력 방식을 16진수로 변경한다
+cout << oct; // 숫자 출력 방식을 8진수로 변경한다
+*) hex, oct 는 endl 처럼 std namespace에 포함되어 있기 때문에 std를 사용하는 함수 내에서는 변수 이름으로 쓸 수 없다
+
+C++에서는 상수 정수의 타입을 판별할 때 아래의 특별한 경우들이 아니면 int로 판단한다
+- 상수 뒤에 U,L,LL 등의 suffix로 타입을 명시해주었을 때 (l보다는 L로 쓰는 것이 좋음, 1이랑 구분짓기 위함)
+- 상수가 int 에 담기에 너무 큰 수일 때
+*) 10진수 상수의 경우 "상수를 표현할 수 있는 가장 작은 타입" 으로 저장되고 16,8 진수의 경우도 이 규칙이 적용되지만 unsigned타입도 적용될 수 있다는 점이 다르다
+**) 이는 16진수의 경우 메모리 주소를 나타내기 위해 사용하는 경우가 많으며 메모리 주소가 근본적으로 unsigned이기 때문에 그렇다
+
+ cout.put(ch); //문자 ch 출력
+ put()은 ostream class의 member function으로 ostream의 특정 객체에서만 사용할 수 있다
+ 이때 .은 membership operator로 부른다
+ *) <<이 있는데 왜 put() 같은 게 있냐면 Release 2.0 이전에는 character constant가 char이 아니고 int 로 저장되어서 <<가 제대로 출력을 못했기 때문이라 함
+ **) 이제는 character constant를 char로 저장하기 때문에 <<를 사용해도 무방하다
+ 
+ 현대 시스템은 더이상 escape sequence를 모두 보장하지 않는다 (전신을 사용하던 시절 쓰던 게 남아있어서 그렇다)
+ *) '\a'가 항상 알람음을 울리지 않는다는 것
+ 
+ \u로 'Universal characterset'을 사용할 수 있다
+ 16진수 ISO 10646 코드를 뒤에 덧붙임으로써 다른 문자를 사용할 수 있다 (변수 이름으로도 쓸 수 있다)
+ 
+ char은 다른 정수형 타입과는 다르게 부호의 기본값이 정해져있지 않다. 따라서 부호가 중요한 상황에서는 signed 혹은 unsigned 를 명확히 명시해줘야 한다
+ *) char이 ASCII 캐릭터를 저장할 때는 부호가 상관없다
+ 
+ wchar_t: an integer type with sufficient space to represent the largest extended character set used on the system
+ cin 이나 cout은 char 을 다루는 객체이기 때문에 wchar_t 타입의 문자를 다룰 때에는 wcin 과 wcout을 써야 한다
+ 문자 앞에 L을 붙여서 wider character set임을 표현할 수 있다 (L'P')
+ 
+ char16_t, char32_t 로 부호가 없는 16비트, 32비트 char 타입을 표현할 수 있다
+ char16_t, char32_t 는 각각 u, U prefix 를 문자 또는 문자열 앞에 붙여서 타입을 명시해줄 수 있다
+ 
+ bool type 은  true, false 두 값을 가지며 다른 정수 값으로 type conversion할 경우 true는 1, false는 0을 나타내게 된다
+ 정수 값을 bool로 type conversion하게 되면 0이 아닌 정수는 true, 0은 false를 나타내게 된다
+ 
+ 저자는 상수에 이름을 붙일 때 #define보다 const를 사용하는 것을 추천했는데 그 이유는 다음과 같다
+ - 타입을 특정할 수 있다
+ - C++의 Scoping rule을 이용해서 특정 함수나 파일에만 사용할 수 있다
+ - 더 복잡한 타입 (배열이나 구조체 등) 에서도 사용할 수 있다
+ 
+ By default, floating-point constant has the type double
+ you can explicitly use the suffix f to make its type float (L for long double)
+ 
+ %연산에서 피연산자 중 하나가 음수일 때 결과의 부호는 다음 규칙을 만족한다:
+ 	(a/b)*b + a%b = a
+
+cout.setf() //출력방식을 결정하는 멤버 함수
+
+*) float는 6.s.f 까지만 정확도를 보장한다
+
+operator의 연산 순서는 precedence와 associativity 로 정해진다
+
+C++에서 Type conversion이 일어나는 경우는 다음과 같다
+- 변수에 값을 할당할 때 서로 타입이 다르다
+- 한 expressio에 다른 타입이 들어가 있다
+- function parameter와 argument의 타입이 다르다
+*) {}로 list initialization을 하는 경우에는 narrowing (포함하는 값의 범위가 넓은 타입의 값을 작은 타입으로 변경하는 것) 이 금지되어 있다
+**) 할당하는 값이 상수인 경우에는 변수가 그 값을 담을 수 있는 경우에는 type conversion이 가능하다
+
+force type conversion:
+(long) thorn // returns a type long conversion of thorn (thorn의 값 자체는 바뀌지 않음)
+long (thorn) // does exactly the same thing as above
+static_cast<long> (thorn) // more restricted form of casting (나중 챕터에서 설명해준다고 함 일단 이 코드에서 하는 일은 같음)
+
+auto는 C++에 와서 의미가 바뀐 키워드이다
+auto는 initializer와 같이 쓰이면 자동으로 타입을 지정해준다
+auto n = 100; // n의 타입이 100의 타입인 int로 지정된다
+
+
+ 
+ 
+
